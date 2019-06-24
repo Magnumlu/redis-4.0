@@ -1295,7 +1295,13 @@ int parseOptions(int argc, const char **argv) {
             config.datasize = atoi(argv[++i]);
             if (config.datasize < 1) config.datasize=1;
             if (config.datasize > 1024*1024*1024) config.datasize = 1024*1024*1024;
-        } else if (!strcmp(argv[i],"-P")) {
+        } else if (!strcmp(argv[i], "-drange")) {  //add parameter "-drange", --by menglonglu
+	    if(lastarg) goto invalid;
+	    int low = atoi(argv[++i]), high = atoi(argv[++i]);
+	    config.datasize = low + rand()%(high - low + 1);
+            if (config.datasize < 1) config.datasize=1;
+            if (config.datasize > 1024*1024*1024) config.datasize = 1024*1024*1024;
+	}else if (!strcmp(argv[i],"-P")) {
             if (lastarg) goto invalid;
             config.pipeline = atoi(argv[++i]);
             if (config.pipeline <= 0) config.pipeline=1;
@@ -1464,10 +1470,11 @@ int main(int argc, const char **argv) {
     int i;
     char *data, *cmd;
     int len;
-
+	
     client c;
 
     srandom(time(NULL));
+    srand(time(NULL));
     signal(SIGHUP, SIG_IGN);
     signal(SIGPIPE, SIG_IGN);
 
